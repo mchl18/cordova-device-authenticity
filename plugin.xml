@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="cordova-plugin-device-authenticity"
+        version="0.0.1">
+    <name>CordovaDeviceAuthenticity</name>
+    <description>A Cordova plugin to check device authenticity</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,device,authenticity,security</keywords>
+
+    <js-module src="www/CordovaDeviceAuthenticity.js" name="CordovaDeviceAuthenticity">
+        <clobbers target="cordova.plugins.CordovaDeviceAuthenticity" />
+    </js-module>
+
+    <!-- Android Platform -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="CordovaDeviceAuthenticity">
+                <param name="android-package" value="com.michaelgerullis.cordovadeviceauthenticity.CordovaDeviceAuthenticity"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/CordovaDeviceAuthenticity.java" target-dir="src/android/CordovaDeviceAuthenticity.java" />
+        <!-- <source-file src="src/android/CordovaDeviceAuthenticity.java" target-dir="src/com/michaelgerullis/cordovadeviceauthenticity" /> -->
+    </platform>
+
+    <!-- iOS Platform -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="CordovaDeviceAuthenticity">
+                <param name="ios-package" value="CordovaDeviceAuthenticity"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/ios/CordovaDeviceAuthenticity.swift" />
+
+        <preference name="SWIFT_VERSION" default="5.0" />
+
+        <dependency id="cordova-plugin-add-swift-support" version="2.0.2"/>
+    </platform>
+</plugin>
