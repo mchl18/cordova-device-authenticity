@@ -1,7 +1,7 @@
 {
-  "name": "cordovadeviceauthenticity",
-  "version": "1.0.0",
-  "description": "",
+  "name": "cordova-device-authenticity",
+  "version": "0.0.1",
+  "description": "A Cordova plugin for checking root/jailbreak, emulator/simulator, and other device integrity checks",
   "main": "www/CordovaDeviceAuthenticity.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
