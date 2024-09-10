@@ -188,11 +188,10 @@ public class CordovaDeviceAuthenticity extends CordovaPlugin {
 
     private void checkPaths(JSONArray args, CallbackContext callbackContext) {
         try {
-            // JSONObject params = args.optJSONObject(0);
-            // JSONArray rootIndicatorPaths = params != null ? params.optJSONArray("rootIndicatorPaths") : null;
+            JSONObject params = args.optJSONObject(0);
+            JSONArray rootIndicatorPaths = params != null ? params.optJSONArray("rootIndicatorPaths") : null;
             JSONObject result = new JSONObject();
-            // result.put("hasOffendingPaths", _checkPaths(rootIndicatorPaths));
-            result.put("hasOffendingPaths", "false");
+            result.put("hasOffendingPaths", _checkPaths(rootIndicatorPaths));
             callbackContext.success(result);
         } catch (Exception e) {
             Log.e(TAG, "Error in checkPaths: " + e.getMessage(), e);
