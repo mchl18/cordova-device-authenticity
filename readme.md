@@ -1,4 +1,4 @@
-# Disclaimer for Device Check Plugin
+# Cordova Device Authenticity
 
 This plugin is designed to check various aspects of a device's integrity and security. While it can be a useful tool for developers and organizations seeking to enhance their app's security, please be aware of the following:
 
