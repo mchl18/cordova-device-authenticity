@@ -1,11 +1,38 @@
 {
   "name": "cordova-device-authenticity",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Cordova plugin for checking root/jailbreak, emulator/simulator, and other device integrity checks",
   "main": "www/CordovaDeviceAuthenticity.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Michael Gerullis",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mchl18/cordova-device-authenticity.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mchl18/cordova-device-authenticity/issues"
+  }, 
+  "keywords": [
+    "cordova",
+    "plugin",
+    "native",
+    "device",
+    "security",
+    "authenticity",
+    "checksum",
+    "hash",
+    "signature",
+    "certificate",
+    "fingerprint",
+    "sha256",
+    "jailbreak",
+    "root",
+    "android",
+    "ios",
+    "emulator",
+    "simulator"
+  ]
 }

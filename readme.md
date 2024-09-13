@@ -21,3 +21,6 @@ This plugin is designed to check various aspects of a device's integrity and sec
 By using this plugin, you acknowledge these limitations and agree to use it responsibly. Always test thoroughly in your specific use case and consider the potential impact on your users.
 
 The authors and contributors of this plugin are not responsible for any damages or losses arising from its use or misuse. Use at your own risk.
+
+
+IMPORTANT: This plugin is still under development and is not yet ready for production use. The author has yet to verify if these calls trigger security warnings or cause app store rejections.
