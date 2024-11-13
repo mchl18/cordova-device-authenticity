@@ -29,12 +29,23 @@ import Cordova
         let options = command.arguments[0] as? [String: Any] ?? [:]
         let jailbreakIndicatorPaths = options["jailbreakIndicatorPaths"] as? [String] ?? []
         let forbiddenAppStoreSchemas = options["forbiddenAppStoreSchemas"] as? [String] ?? []
+        
+        // Get all check results
         let hasPaths = _checkOffendingPaths(jailbreakIndicatorPaths: jailbreakIndicatorPaths)
         let canWritePrivate = _checkPrivateWrite()
         let isEmulator = _isRunningOnSimulator()
         let hasThirdPartyAppStore = _hasThirdPartyAppStore(forbiddenAppStoreSchemas: forbiddenAppStoreSchemas)
+        
+        // Calculate isJailbroken based on all checks
+        let isJailbroken = isEmulator || 
+            canWritePrivate.canWritePrivate || 
+            hasPaths.hasOffendingPaths || 
+            hasThirdPartyAppStore.hasThirdPartyAppStore
+        
+        // Build failedChecks array
         var failedChecks: [String] = []
-        let isJailbroken = isEmulator || canWritePrivate.canWritePrivate || hasPaths.hasOffendingPaths || hasThirdPartyAppStore.hasThirdPartyAppStore
+        
+        // Add each failed check to the array
         if isJailbroken {
             failedChecks.append("isJailbroken")
         }
@@ -51,6 +62,7 @@ import Cordova
             failedChecks.append("hasThirdPartyAppStore")
         }
 
+        // Build result dictionary with all check results and details
         let result = [
             "isJailbroken": isJailbroken,
             "isEmulator": isEmulator,
@@ -202,9 +214,15 @@ import Cordova
     
     private func _checkPrivateWrite() -> CheckPrivateWriteResult {
         let fileManager = FileManager.default
+        let testPath = "/private/jailbreak.txt"
+        
         do {
-            try "jailbreak test".write(toFile: "/private/jailbreak.txt", atomically: true, encoding: .utf8)
-            try fileManager.removeItem(atPath: "/private/jailbreak.txt")
+            // defer will run when exiting the scope, regardless of whether an error occurred
+            defer {
+                try? fileManager.removeItem(atPath: testPath)
+            }
+            
+            try "jailbreak test".write(toFile: testPath, atomically: true, encoding: .utf8)
             return CheckPrivateWriteResult(canWritePrivate: true, detectedPrivateWritePaths: ["/private"])
         } catch {
             return CheckPrivateWriteResult(canWritePrivate: false, detectedPrivateWritePaths: [])

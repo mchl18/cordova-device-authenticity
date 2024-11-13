@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        id="cordova-plugin-device-authenticity"
+        id="com.michaelgerullis.cordovadeviceauthenticity"
         version="0.0.1">
     <name>CordovaDeviceAuthenticity</name>
     <description>A Cordova plugin to check device authenticity</description>
@@ -20,8 +20,7 @@
             </feature>
         </config-file>
 
-        <source-file src="src/android/CordovaDeviceAuthenticity.java" target-dir="src/android/CordovaDeviceAuthenticity.java" />
-        <!-- <source-file src="src/android/CordovaDeviceAuthenticity.java" target-dir="src/com/michaelgerullis/cordovadeviceauthenticity" /> -->
+        <source-file src="src/android/CordovaDeviceAuthenticity.java" target-dir="src/com/michaelgerullis/cordovadeviceauthenticity" />
     </platform>
 
     <!-- iOS Platform -->

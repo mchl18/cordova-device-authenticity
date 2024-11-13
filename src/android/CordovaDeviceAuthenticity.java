@@ -80,7 +80,6 @@ public class CordovaDeviceAuthenticity extends CordovaPlugin {
 
     private void checkAuthenticity(JSONArray args, CallbackContext callbackContext) {
         try {
-            Log.d(TAG, "checkAuthenticity called with args: " + args.toString());
             JSONObject params = args.getJSONObject(0);
             String expectedApkSignature = params.optString("expectedApkSignature");
             JSONArray rootIndicatorTags = params.optJSONArray("rootIndicatorTags");
@@ -89,22 +88,40 @@ public class CordovaDeviceAuthenticity extends CordovaPlugin {
             JSONArray allowedStores = params.optJSONArray("allowedStores");
 
             JSONObject result = new JSONObject();
+            JSONArray failedChecks = new JSONArray();
             String apkSignature = _getApkCertSignature();
 
-            result.put("isRooted", _checkIsRooted(rootIndicatorTags, rootIndicatorPaths, rootIndicatorFiles));
-            result.put("isEmulator", _isEmulator() || _isRunningInEmulator());
+            boolean isRooted = _checkIsRooted(rootIndicatorTags, rootIndicatorPaths, rootIndicatorFiles);
+            boolean isEmulator = _isEmulator() || _isRunningInEmulator();
+            boolean hasOffendingPaths = _checkPaths(rootIndicatorPaths);
+            boolean hasOffendingTags = _checkTags(rootIndicatorTags);
+            boolean hasOffendingExecutableFiles = _checkExecutableFiles(rootIndicatorFiles);
+            boolean isNotInstalledFromAllowedStore = _isNotInstalledFromAllowedStore(_getAllowedStores(allowedStores));
+            
+            result.put("isRooted", isRooted);
+            result.put("isEmulator", isEmulator);
+            result.put("hasOffendingPaths", hasOffendingPaths);
+            result.put("hasOffendingTags", hasOffendingTags);
+            result.put("hasOffendingExecutableFiles", hasOffendingExecutableFiles);
+            result.put("isNotInstalledFromAllowedStore", isNotInstalledFromAllowedStore);
+
+            if (isRooted) failedChecks.put("isRooted");
+            if (isEmulator) failedChecks.put("isEmulator");
+            if (hasOffendingPaths) failedChecks.put("hasOffendingPaths");
+            if (hasOffendingTags) failedChecks.put("hasOffendingTags");
+            if (hasOffendingExecutableFiles) failedChecks.put("hasOffendingExecutableFiles");
+            if (isNotInstalledFromAllowedStore) failedChecks.put("isNotInstalledFromAllowedStore");
+
             if (expectedApkSignature != null && !expectedApkSignature.isEmpty()) {
                 Boolean signatureMatch = _checkApkCertSignature(expectedApkSignature);
                 result.put("apkCertSignatureMatch", signatureMatch);
+                if (!signatureMatch) failedChecks.put("apkCertSignatureMatch");
             }
             if (apkSignature != null && !apkSignature.isEmpty()) {
                 result.put("apkCertSignature", apkSignature);
             }
-            result.put("hasOffendingPaths", _checkPaths(rootIndicatorPaths));
-            result.put("isNotInstalledFromAllowedStore", _isNotInstalledFromAllowedStore(_getAllowedStores(allowedStores)));
-            result.put("hasOffendingTags", _checkTags(rootIndicatorTags));
-            result.put("hasOffendingExecutableFiles", _checkExecutableFiles(rootIndicatorFiles));
 
+            result.put("failedChecks", failedChecks);
             callbackContext.success(result);
         } catch (Exception e) {
             Log.e(TAG, "Error in checkAuthenticity: " + e.getMessage(), e);
@@ -166,7 +183,16 @@ public class CordovaDeviceAuthenticity extends CordovaPlugin {
             JSONObject params = args.optJSONObject(0);
             String expectedApkSignature = params != null ? params.optString("expectedApkSignature") : null;
             JSONObject result = new JSONObject();
-            result.put("apkCertSignatureMatches", _checkApkCertSignature(expectedApkSignature));
+            
+            if (expectedApkSignature == null || expectedApkSignature.isEmpty()) {
+                callbackContext.error("No APK signature provided. Args: " + args.toString() + ", Params: " + (params != null ? params.toString() : "null"));
+                return;
+            }
+
+            String actualSignature = _getApkCertSignature();
+            boolean matches = expectedApkSignature.equals(actualSignature);
+            result.put("apkCertSignatureMatches", matches);
+            
             callbackContext.success(result);
         } catch (Exception e) {
             callbackContext.error("Error checking APK certificate signature: " + e.getMessage());
@@ -214,6 +240,7 @@ public class CordovaDeviceAuthenticity extends CordovaPlugin {
 
     private String _getApkCertSignature() throws PackageManager.NameNotFoundException, NoSuchAlgorithmException {
         PackageInfo packageInfo;
+        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             packageInfo = cordova.getActivity().getPackageManager().getPackageInfo(cordova.getActivity().getPackageName(),
                     PackageManager.GET_SIGNING_CERTIFICATES);
@@ -242,13 +269,24 @@ public class CordovaDeviceAuthenticity extends CordovaPlugin {
             return false;
         }
     }
-
+    
+    // Returns a lowercase hex string without colons of the SHA-256 hash of the signature
+    // todo: make it so we can specify the format (hex, base64, etc.)
     private String _calculateSignature(Signature sig) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(sig.toByteArray());
         byte[] digest = md.digest();
-        String signature = Base64.encodeToString(digest, Base64.DEFAULT);
-        return signature.replace(":", "").toLowerCase();
+        
+        // Convert to colon-separated hex format
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : digest) {
+            String hex = String.format("%02X", b);
+            if (hexString.length() > 0) {
+                hexString.append(":");
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString().replace(":", "").toLowerCase();
     }
 
     private boolean _isEmulator() {

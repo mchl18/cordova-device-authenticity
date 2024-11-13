@@ -1,4 +1,8 @@
 var deviceAuthenticity = {
+  /**
+   * @param {import('../types').DeviceAuthenticityOptions} [options]
+   * @returns {Promise<import('../types').DeviceAuthenticityResult>}
+   */
   checkAuthenticity: function (options = {}) {
     return new Promise(function (resolve, reject) {
       cordova.exec(
@@ -31,26 +35,8 @@ var deviceAuthenticity = {
     });
   },
   /**
-   *
-   * @param {object} options
-   * @param {string[]} options.rootIndicatorFiles
-   * @returns {{isNotInstalledFromAllowedStore: boolean}}
-   */
-  isNotInstalledFromAllowedStore: function (options = {}) {
-    return new Promise(function (resolve, reject) {
-      cordova.exec(
-        resolve,
-        reject,
-        "CordovaDeviceAuthenticity",
-        "isInstalledFromAllowedStore",
-        [options]
-      );
-    });
-  },
-
-  /**
-   *
-   * @returns {{apkCertSignature: string}}
+   * Get detailed information about the APK signature
+   * @returns {Promise<import('../types').SignatureResult>}
    */
   getApkCertSignature: function () {
     return new Promise(function (resolve, reject) {
@@ -65,14 +51,12 @@ var deviceAuthenticity = {
   },
 
   /**
-   *
-   * @param {object} options
-   * @param {string} options.apkCertSignature
-   * @returns {{apkCertSignatureMatches: boolean}}
+   * @param {{expectedApkSignature: string}} options
+   * @returns {Promise<{apkCertSignatureMatches: boolean}>}
    */
   checkApkCertSignature: function (options = {}) {
     return new Promise(function (resolve, reject) {
-      if (!options.apkCertSignature) {
+      if (!options.expectedApkSignature) {
         return reject(
           "No options provided, please provide an APK certificate signature"
         );
