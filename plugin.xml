@@ -13,7 +13,7 @@
     </js-module>
 
     <!-- Android Platform -->
-    <platform name="android">
+    <!-- <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="CordovaDeviceAuthenticity">
                 <param name="android-package" value="com.michaelgerullis.cordovadeviceauthenticity.CordovaDeviceAuthenticity"/>
@@ -21,7 +21,7 @@
         </config-file>
 
         <source-file src="src/android/CordovaDeviceAuthenticity.java" target-dir="src/com/michaelgerullis/cordovadeviceauthenticity" />
-    </platform>
+    </platform> -->
 
     <!-- iOS Platform -->
     <platform name="ios">
@@ -32,6 +32,7 @@
         </config-file>
 
         <source-file src="src/ios/CordovaDeviceAuthenticity.swift" />
+        <header-file src="src/ios/CordovaDeviceAuthenticity-Bridging-Header.h" />
 
         <preference name="SWIFT_VERSION" default="5.0" />
 

@@ -1,5 +1,5 @@
 import Foundation
-import Cordova
+// import Cordova
 
 @objc(CordovaDeviceAuthenticity) class CordovaDeviceAuthenticity : CDVPlugin {
     struct CheckPathsResult {
