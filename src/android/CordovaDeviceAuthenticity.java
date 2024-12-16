@@ -150,7 +150,7 @@ public class CordovaDeviceAuthenticity extends CordovaPlugin {
         try {
             JSONObject result = new JSONObject();
             result.put("isEmulator", _isEmulator() || _isRunningInEmulator());
-            callbackContext.success("");
+            callbackContext.success(result);
         } catch (Exception e) {
             callbackContext.error("Error checking device emulator status: " + e.getMessage());
         }
